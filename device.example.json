@@ -1,0 +1,49 @@
+{
+  "_comment": [
+    "Every expectation here is something a person wrote down. Nothing is inferred from the",
+    "builder, because inferring it from the builder would only re-read the mistake.",
+    "Declare only what you mean: a section you leave out is not checked, and the report says so",
+    "rather than counting it as a pass.",
+    "Lengths are in microns. This example describes a ridge waveguide in a film, on cladding, on",
+    "substrate, with an air trench on each side of the core."
+  ],
+
+  "propagation_axis": "x",
+  "probe": [0.0, 0.0],
+
+  "cell_encloses_stack": true,
+
+  "stack": [
+    {"name": "substrate", "thickness_um": 1.0},
+    {"name": "cladding", "thickness_um": 1.8},
+    {"name": "film", "thickness_um": 0.3, "tol_um": 0.002}
+  ],
+
+  "profile": {
+    "at_layer": "film",
+    "half_span_um": 2.0,
+    "features": [
+      {"name": "film"},
+      {"name": "moat_left", "width_um": 1.2},
+      {"name": "film", "width_um": 0.6},
+      {"name": "moat_right", "width_um": 1.2},
+      {"name": "film"}
+    ]
+  },
+
+  "expect_meshes": false,
+
+  "_design_region_example": {
+    "_comment": [
+      "Only for a topology-optimised run, and only when you actually have one. The name must be",
+      "the name of a real structure: declaring a region that does not exist is a FAIL, not a skip,",
+      "because a guard that may stop measuring wherever it is told would be silenced by naming a",
+      "structure conveniently.",
+      "With a region declared, the stack and profile are measured on a cut OUTSIDE it, where the",
+      "drawn film survives, and the report names the cut it used."
+    ],
+    "name": "design_region",
+    "mirror_symmetric_about_axis": true,
+    "corridor_um": 0.3
+  }
+}
