@@ -22,15 +22,9 @@ Not a typo. A geometry error that enters as a convenience for one run, and is th
 inherited by every run after it, because each new run is checked against the previous
 one.
 
-That is the part worth saying plainly: a chain of relative checks does not catch an
-error, it propagates one. Every run matches its predecessor. The spectra move
-smoothly. The cross-sections look like the cross-sections from last week, because they
-are. Each run *was* checked, against the wrong thing, and the geometry that everyone
-had agreed on weeks earlier was never compared to what the builder actually produced.
-
-So this module deliberately does the one thing prose and eyeballing cannot: it reads
-the built simulation, measures the device out of it, and compares that to a written
-spec, with no reference to any earlier run.
+A chain of relative checks does not catch an error, it propagates one. Every run
+matches its predecessor, the spectra move smoothly, and the cross-sections look like
+last week's because they are. Each run was checked, against the wrong thing.
 
 ## How it measures
 
@@ -43,8 +37,7 @@ From that it reconstructs two things:
 
 **The vertical stack** on a probe line: which layers, in which order, how thick.
 
-**The in-plane profile** across the propagation axis. This is the one that matters,
-and it is the one a stack check cannot replace. A patterned film modelled as an
+**The in-plane profile** across the propagation axis. A patterned film modelled as an
 unpatterned slab has an *identical* vertical stack. The trenches are missing, the mode
 is not confined, and every layer check still passes. Only a cut across the device sees
 it, as one material running all the way out.
@@ -65,11 +58,10 @@ pass is the failure mode this whole module is about.
 | `expect_meshes` | imported mesh structures present, or declared absent |
 | `design_region` | a free-form region: measured outside it, optional mirror symmetry and solid corridor |
 
-`cell_encloses_stack` deserves its own line. A bottom layer that runs into the
-absorbing boundary is not the declared layer, it is a semi-infinite half space, and
-every check above it passes on that geometry because none of them looks below the
-layer it names. A cross-section plot does not show it either: the coloured band looks
-the same whether the oxide is two microns thick or never ends.
+A bottom layer that runs into the absorbing boundary is not the declared layer, it is
+a semi-infinite half space. Every check above it passes, because none of them looks
+below the layer it names, and a cross-section plot shows the same coloured band
+whether the oxide is two microns thick or never ends.
 
 `expect_meshes` has to be declared in both directions. A run that should carry an
 imported particle and does not is a silent null. A control that is supposed to have no
@@ -80,8 +72,7 @@ particle and quietly has one destroys the control without failing anything.
 A topology-optimised run replaces the drawn film over part of the cell with a
 custom medium. Inside that region the structure *name* is constant and says nothing:
 it is one structure whose material varies from point to point. A guard that only reads
-names degrades to a name lookup at exactly the moment the geometry becomes free, which
-is the worst possible moment.
+names degrades to a name lookup at exactly the moment the geometry becomes free.
 
 Declare the region and the guard changes what it does: it measures the stack and the
 profile on a cut taken outside the region, where the drawn film survives, and says in
@@ -92,7 +83,7 @@ The region must be declared, never inferred. A guard that decides for itself whi
 structure it is allowed to stop measuring can be silenced by naming a structure
 conveniently, so declaring a region that does not exist is a failure, not a skip.
 
-## Two details that are not obvious
+## Two measurement details
 
 **An interface is placed at the midpoint between samples.** The obvious version reports
 a run from its first sample to its last, which is short by one spacing at each end and
@@ -107,8 +98,7 @@ is inside an imported mesh needs a spatial index package. Without it, the contai
 call raises, and an except-everything swallows it and reports the surrounding material
 instead. Every assertion involving a mesh then passes without ever testing the mesh.
 So an import failure is raised, loudly, while a geometry that legitimately cannot
-answer is still skipped. Those are different things and a guard that conflates them
-reads stronger than it is.
+answer is still skipped.
 
 ## Requirements
 
